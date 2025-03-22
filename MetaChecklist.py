@@ -1,5 +1,5 @@
 class MetaChecklistTab(object):
-    def __init__(self, test=True):
+    def __init__(self, test=False):
         import ipywidgets as wg
         import numpy as np
         import matplotlib.pyplot as plt
