@@ -26,4 +26,6 @@ meta.tab
 
 # Further information
 
+Apologies for the current absence of comments, instructions, or docstrings within the code - I'll try to add these in the near future!
+
 For further information and help, feel free to contact: liam.bird@eng.ox.ac.uk
