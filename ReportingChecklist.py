@@ -25,17 +25,18 @@ class ReportingChecklist(object):
                        "LFP": wg.Checkbox(description="LFP",indent=False),
                        "LFP/NMC blend": wg.Checkbox(description="LPF/NMC blend",indent=False),
                        "LCO": wg.Checkbox(description="LCO",indent=False),
-                       "Other cathode text": wg.Text(description="Other cathode"),
+                       "Other cathode text": wg.Text(description="Other cathode", style={"description_width": "initial"}),
                        "Cell format":  wg.Dropdown(description="Cell format",
                                                                       options=["Coin", "Swagelok", "Pouch", "Other"]),
                                           "Cell format other": wg.Text(description="Other"),
-                                          "N/P electrode balance value":  wg.FloatText(description="N/P electrode balance"),
+                                          "N/P electrode balance value":  wg.FloatText(description="N/P electrode balance",
+                                                                                       style={"description_width": "initial"}),
                                           "N/P reported": wg.Checkbox(description="Not reported", value=True),
                                           "N/P N/A": wg.Checkbox(description="N/A"),
                                           "Electrolyte volume reported": wg.FloatText(description="Electrolyte volume",
-                                                                                      style={"description_width": "initial"}),
+                                                                                      style={"description_width": "auto"}),
                                            "Electrolyte ratio reported": wg.FloatText(description="Electrolyte/ active ratio", 
-                                                                                      style={"description_width": "initial"}),
+                                                                                      style={"description_width": "50pt"}),
                       }
         
         report_self.cell_format_vbox = wg.VBox([
@@ -52,7 +53,7 @@ class ReportingChecklist(object):
              report_self.cell_format_widgets["NMC532"],
              report_self.cell_format_widgets["NMC111"],
              report_self.cell_format_widgets["Other NMC"],
-             report_self.cell_format_widgets["LFP"],
+#              report_self.cell_format_widgets["LFP"],
              report_self.cell_format_widgets["LFP/NMC blend"],
              report_self.cell_format_widgets["LCO"]])
 ]),
@@ -72,56 +73,76 @@ class ReportingChecklist(object):
 ########## Electrode processing ##########
         
         report_self.electrode_widgets = {"Assembly processing environment":  wg.Checkbox(description="Assembly/ processing environment", indent=False),
-                                         "Production scale": wg.Checkbox(description="Production scale (g, kg...)", indent=False),
-                                         "Production scale comment": wg.Text(description="Comment"),
-                                         "Using commercial electrode": wg.RadioButtons(description="Using commercial electrode", options=["No", "Yes"], value="No"),
-                                         "Electrode mass comp Binder": wg.Checkbox(description="Binder"),
-                                         "Electrode mass comp Additive": wg.Checkbox(description="Additive"),
-                                         "Electrode mass comp Active": wg.Checkbox(description="Active material"),
-                                         "Electrode mass comp Solid content slurry": wg.Checkbox(description="Solid content slurry"),
-                                         "Electrode thickness": wg.Text(description="Electrode thickness", style={"description_width": "initial"}),
-                                         "Electrode how measured": wg.Dropdown(description="How measured",
-                                                                               options=["", "Coating setting", "Calendering setting","Direct measurement","SEM","Inferred from mass"],
-                                                           value=""),
-                                         "Electrode mass loading": wg.Text(description="Electrode mass loading (total)", style={"description_width": "initial"}),
-                                         "Calendered":wg.Checkbox(description="Calendared", indent=False),
-                                         "Active material areal": wg.FloatText(description="Active material: Areal loading (mg/cm2)",
-                                                           style={"description_width": "initial"}),
-                                         "Active material fractional": wg.FloatText(description="Active material: Mass (wt%)",
-                                                                style={"description_width": "initial"})}
+                                         "Production scale": wg.Checkbox(description="Reported?", indent=False),
+                                         "Production scale comment": wg.Text(description="Indicate scale (mg, g, kg...)",
+                                                                             style={"description_width": "initial"}),
+                                         "Using commercial electrode": wg.RadioButtons(description="", options=["No", "Yes"], value="No"),
+                                         "Electrode mass comp Binder": wg.Checkbox(value=True),
+                                         "Electrode mass comp Additive": wg.Checkbox(value=True),
+                                         "Electrode mass comp Active": wg.Checkbox(value=True),
+                                         "Electrode mass comp Solid content slurry": wg.Checkbox(value=False),
+                                         "Electrode thickness": wg.Text(description="Value (include um/ mm)", 
+                                                                        style={"description_width": "initial",
+                                                                               "width": "500px"}),
+                                         "Electrode how measured": wg.Dropdown(description="How is electrode thickness measured?",
+                                                                               options=["", "Coating setting", "Calendering setting",
+                                                                                        "Direct measurement","SEM","Inferred from mass",
+                                                                                        "Precursor/ template thickness", 
+                                                                                        "Other"],
+                                                           value="", style={"description_width": "initial"}),
+                                         "Electrode mass loading": wg.Text(description=""),
+                                         "Calendered":wg.Checkbox(description="Is electrode calendared?", indent=False),
+                                         "Active material areal": wg.FloatText(),
+                                         "Active material fractional": wg.FloatText()}
         
-        report_self.electrode_vbox = wg.VBox([report_self.electrode_widgets["Assembly processing environment"],
-                                     wg.HBox([report_self.electrode_widgets["Production scale"], 
+        
+        checkbox_label_layout = wg.Layout(width="100%", margin="0px 0px 0px -150px")
+        
+        report_self.electrode_vbox = wg.VBox([
+#             report_self.electrode_widgets["Assembly processing environment"], ## Removed 05/04/2025 due to ambiguity
+                                    wg.Label("Is production scale reported? (e.g. '0.45 g sulfur', '180 mL solvent...')"),
+                                    wg.HBox([report_self.electrode_widgets["Production scale"], 
                                               report_self.electrode_widgets["Production scale comment"]]),
-                                              report_self.electrode_widgets["Using commercial electrode"],
-                                              wg.Label("Electrode composition reported"),
-                                              report_self.electrode_widgets["Electrode mass comp Binder"],
-                                              report_self.electrode_widgets["Electrode mass comp Additive"],
-                                              report_self.electrode_widgets["Electrode mass comp Active"],
-                                              report_self.electrode_widgets["Electrode mass comp Solid content slurry"],
-                                              wg.HBox([report_self.electrode_widgets["Electrode thickness"], 
-                                                       report_self.electrode_widgets["Electrode how measured"]]),
-                                              report_self.electrode_widgets["Electrode mass loading"],
-                                             report_self.electrode_widgets["Calendered"],
-                                             report_self.electrode_widgets["Active material areal"],
-                                             report_self.electrode_widgets["Active material fractional"]
+                                    wg.HBox([wg.Label(value="Is a commercial/ pre-prepared electrode powder used (e.g 'NMC powder was purchased from...')"),
+                                              report_self.electrode_widgets["Using commercial electrode"]]),
+                                    wg.Label("Electrode composition reported (Select all that apply)"),
+                                              wg.HBox([report_self.electrode_widgets["Electrode mass comp Binder"],
+                                                       wg.Label(value="Binder (e.g. PVDF, CMC SBR)", layout=checkbox_label_layout)]),
+                                              wg.HBox([report_self.electrode_widgets["Electrode mass comp Additive"],
+                                                       wg.Label(value="Additive (e.g. Acetylene black, Super-P carbon black)", layout=checkbox_label_layout)]),
+                                              wg.HBox([report_self.electrode_widgets["Electrode mass comp Active"], 
+                                                       wg.Label(value="Active material (e.g. NMC powder, sulfur/ carbon composite)",layout=checkbox_label_layout)]),
+                                              wg.HBox([report_self.electrode_widgets["Electrode mass comp Solid content slurry"],
+                                                       wg.Label(value="Electrolyte solvent: solid ratio (e.g. 1mL NMP per g powder)", layout=checkbox_label_layout)]),
+                                              wg.Label(value="Is the electrode thickness reported? (leave below empty if no values available)"),        
+                                            report_self.electrode_widgets["Electrode thickness"], 
+                                               report_self.electrode_widgets["Electrode how measured"],
+                                                 report_self.electrode_widgets["Calendered"],
+                                    wg.Label("Is the electrode mass loading reported?"),
+                                              wg.HBox([wg.Label(value="Total (active+binder+additive), include units$"),
+                                                       report_self.electrode_widgets["Electrode mass loading"]]),
+                                              wg.HBox([wg.Label(value="Active material (mg/cm$^{2}$) (e.g. NMC, sulfur)"),
+                                                       report_self.electrode_widgets["Active material areal"]]),
+                                    wg.HBox([wg.Label(value="Percentage active material in slurry"),
+                                             report_self.electrode_widgets["Active material fractional"]]),
+                                    wg.Label("For % active material in Li-S: use sulfur/ carbon composite (e.g 80% with 10% binder+10%additive)")
                                     ])
         
 ########## Galvanostatic ##########
 
-        report_self.galvanostatic_widgets = {"Voltage min": wg.FloatText(description="Min"),
-                                             "Voltage max": wg.FloatText(description="Max"),
-                                             "Different voltage range": wg.Checkbox(description="Multiple ranges", indent=False),
+        report_self.galvanostatic_widgets = {"Voltage min": wg.FloatText(description="Min", layout=wg.Layout(width="150px")),
+                                             "Voltage max": wg.FloatText(description="Max", layout=wg.Layout(width="150px")),
+                                             "Different voltage range": wg.Checkbox(description="Multiple ranges reported", indent=False),
                                              "Voltage range NA" : wg.Checkbox(description="N/A", indent=False) ,
                                              "Pre-activation used": wg.Checkbox(description="Pre-activation used", indent=False),
                                              "Pre-activation rate": wg.FloatText(description="Rate"),
                                              "Pre-activation n cycles": wg.IntText(description="No. cycles"), 
                                              "Pre-activation other": wg.Text(description="Other"),
                                              "Pre-activation NA":wg.Checkbox(description="N/A"), 
-                                             "C Rate min": wg.FloatText(description="Min"),
-                                             "C Rate max": wg.FloatText(description="Max"), 
-                                             "Current density min": wg.FloatText(description="Min"),
-                                             "Current density max": wg.FloatText(description="Max"),
+                                             "C Rate min": wg.FloatText(description="Min", layout=wg.Layout(width="150px")),
+                                             "C Rate max": wg.FloatText(description="Max", layout=wg.Layout(width="150px")), 
+                                             "Current density min": wg.FloatText(description="Min", layout=wg.Layout(width="150px")),
+                                             "Current density max": wg.FloatText(description="Max", layout=wg.Layout(width="150px")),
                                              "Current density report": wg.RadioButtons(options=["mA/g", "mA/cm$^{2}$"]),
                                              "Constant voltage charge": wg.Checkbox(description="CV during charge", indent=False),
                                              "Constant voltage discharge": wg.Checkbox(description="CV during discharge", indent=False),
@@ -132,29 +153,50 @@ class ReportingChecklist(object):
                                             }
     
     
-        report_self.galvanostatic_vbox = wg.VBox([wg.Label("Galvanostatic cycling"),
-                                                  wg.HBox([wg.Label("Galvanostatic voltage range"),
-                                                           report_self.galvanostatic_widgets["Voltage min"],
-                                                           report_self.galvanostatic_widgets["Voltage max"],
-                                                           report_self.galvanostatic_widgets["Different voltage range"]]),
-                                                  wg.HBox([report_self.galvanostatic_widgets["Pre-activation used"],
+        report_self.test_params_widgets = {"Temperature": wg.RadioButtons(options=["Not reported", "Constant - non room temp", "Room temp","Under test"]), 
+                       "Theoretical capacity active material": wg.Checkbox(description="Active material", indent=False,
+                                                                           style={"description_width": "initial"}), 
+                      "Theoretical capacity areal":  wg.Checkbox(description="Areal/ mass", indent=False,
+                                                                style={"description_width": "initial"}),
+                       "Theoretical capacity cell": wg.Checkbox(description="Cell", indent=False,
+                                                               style={"description_width": "initial"}),
+                                          "Theoretical capacity slow": wg.Checkbox(description="Slow initial/ formation",
+                                                                                   style={"description_width": "initial"},
+                                                                                  indent=False)}
+    
+        report_self.galvanostatic_vbox = wg.VBox([wg.Label("Temperature reported during galvanostatic/ CV/ EIS?"),
+                                                  report_self.test_params_widgets["Temperature"],
+                                                  wg.Label("How is the theoretical capacity calculated?"),
+                                                  wg.HBox([report_self.test_params_widgets["Theoretical capacity active material"],
+                                                           report_self.test_params_widgets["Theoretical capacity areal"],
+                                                           report_self.test_params_widgets["Theoretical capacity cell"],
+                                                           report_self.test_params_widgets["Theoretical capacity slow"]]),
+                                                  wg.Label("Is a pre-activation/ formation cycle reported?"),
+                                                  wg.HBox([
+#                                                       report_self.galvanostatic_widgets["Pre-activation used"],
                                                            report_self.galvanostatic_widgets["Pre-activation rate"],
                                                            report_self.galvanostatic_widgets["Pre-activation n cycles"],
                                                            report_self.galvanostatic_widgets["Pre-activation other"],
-                                                           report_self.galvanostatic_widgets["Pre-activation NA"]]),
-                                                  wg.Label(value="C Rate"),
-                                                  wg.HBox([
+#                                                            report_self.galvanostatic_widgets["Pre-activation NA"]
+                                                  ]),
+                                                  wg.Label("Galvanostatic cycling summary (use overall max and min values for all samples)"),
+                                                  wg.HBox([wg.Label(value="Voltage cutoffs"),
+                                                      report_self.galvanostatic_widgets["Voltage min"],
+                                                           report_self.galvanostatic_widgets["Voltage max"],
+                                                           report_self.galvanostatic_widgets["Different voltage range"]]),
+                                                  
+                                                  wg.HBox([wg.Label(value="C Rates"),
                                                             report_self.galvanostatic_widgets["C Rate min"],
                                                             report_self.galvanostatic_widgets["C Rate max"]
                                                            ]),
-                                                  wg.Label(value="Current density"),
-                                                  wg.HBox([
+                                                  
+                                                  wg.HBox([wg.Label(value="Current density"),
                                                             report_self.galvanostatic_widgets["Current density min"],
                                                             report_self.galvanostatic_widgets["Current density max"],
                                                             report_self.galvanostatic_widgets["Current density report"]
                                                            ]),
-                                                  wg.Label(value="CC/CV (constant voltage)"),
-                                                  wg.HBox([report_self.galvanostatic_widgets["Constant voltage charge"],
+                                                  wg.HBox([wg.Label(value="CC/CV (constant voltage) step reported?"),
+                                                          report_self.galvanostatic_widgets["Constant voltage charge"],
                                                            report_self.galvanostatic_widgets["Constant voltage discharge"]]),
                                                     report_self.galvanostatic_widgets["Multiple cells"],
                                             ])
@@ -164,43 +206,38 @@ class ReportingChecklist(object):
                                   "Voltage max": wg.FloatText(description="Max"), 
                                   "Sweep rate min": wg.FloatText(description="Min"),
                                   "Sweep rate max": wg.FloatText(description="Max"),
-                                  "Linear scan current": wg.RadioButtons(description="Diffusion by Randles Sevcik eqn: demonstrated linear?",
+                                  "Linear scan current": wg.RadioButtons(
                                             options=["Reported and checked",
                                                      "Reported, not checked",
-                                                     "Not reported"], value="Not reported")}
+                                                     "Not reported"], value="Not reported",
+                                                                         )}
         
         
 
-        report_self.cv_vbox = wg.VBox([wg.Label(value="Cyclic voltammetry"),
-                                         report_self.cv_widgets["Reported"], 
+        report_self.cv_vbox = wg.VBox([report_self.cv_widgets["Reported"], 
                         wg.HBox([wg.Label(value="Voltage range"),
                                 report_self.cv_widgets["Voltage min"], report_self.cv_widgets["Voltage max"]]),
                             wg.HBox([wg.Label("Sweep/ scan rate"), 
                                      report_self.cv_widgets["Sweep rate min"], report_self.cv_widgets["Sweep rate max"]]),
+                                       wg.Label("Diffusion by Randles Sevcik equation: demonstration of linear relationship?"),
                                        report_self.cv_widgets["Linear scan current"]
                             ])
 
         report_self.eis_widgets = {"Reported":  wg.RadioButtons(description="EIS reported?", options=["Yes", "No"], value=None),
-               "ECM": wg.RadioButtons(description="Equivalent circuit model reported?", options=["None",
+               "ECM": wg.RadioButtons(options=["None",
                                                                                         "2 component",
                                                                                         "3 component",
                                                                                         "4 component",
                                                                                         "5+ components"], value=None)}
 
-        report_self.eis_vbox = wg.VBox([wg.Label(value="Electrochemical impedance spectroscopy"),
+        report_self.eis_vbox = wg.VBox([
                      report_self.eis_widgets["Reported"],
+            wg.Label("Equivalent circuit model reported?"),
+            wg.Label("Single 'components' include: Series/ Ohmic resistor for electrolyte, Parallel Voigt element (e.g. CPE-Ws//R), Warburg element"),
                     report_self.eis_widgets["ECM"]
         ])
         
-        report_self.test_params_widgets = {"Temperature": wg.RadioButtons(description="Temperature during electrochem testing",
-                                                        options=["Not reported", 
-                                                                 "Constant - non room temp",
-                                                                 "Room temp",
-                                                                 "Under test"]), 
-                       "Theoretical capacity active material": wg.Checkbox(description="Active material", indent=False), 
-                      "Theoretical capacity areal":  wg.Checkbox(description="Areal/ mass", indent=False),
-                       "Theoretical capacity cell": wg.Checkbox(description="Cell", indent=False),
-                                          "Theoretical capacity slow": wg.Checkbox(description="Slow initial/ formation")}
+
             
 
         report_self.electrochem_accordion = wg.Accordion([report_self.cell_format_vbox, 
@@ -208,17 +245,14 @@ class ReportingChecklist(object):
                                               report_self.galvanostatic_vbox,
                                               report_self.cv_vbox,
                                               report_self.eis_vbox])
-        for title, (index, _) in zip(["Cell format", "Electrode processing", "Galvanostatic", "CV", "EIS"],
+        for title, (index, _) in zip(["Cell format", "Electrode processing", "Galvanostatic", "Cyclic voltammetry (CV)",
+                                      "Electrochem Impedance Spectroscopy (EIS)"],
                                      enumerate(report_self.electrochem_accordion.children)):
             report_self.electrochem_accordion.set_title(index, "{}".format(title))
 
         report_self.vbox = wg.VBox([wg.HBox([report_self.save_button, report_self.save_label]),
-            report_self.test_params_widgets["Temperature"],
-                                    wg.Label(value="Theoretical capacity calculated with respect to mass of..."),
-                                  wg.HBox([report_self.test_params_widgets["Theoretical capacity active material"],
-                                           report_self.test_params_widgets["Theoretical capacity areal"],
-                                           report_self.test_params_widgets["Theoretical capacity cell"],
-                                          report_self.test_params_widgets["Theoretical capacity slow"]]),
+#             report_self.test_params_widgets["Temperature"],
+#                                     wg.Label(value="Theoretical capacity calculated with respect to mass of..."),
                                   report_self.electrochem_accordion
                                  ])
         
@@ -254,8 +288,6 @@ class ReportingChecklist(object):
                              "eis_widgets": "EIS"}
 
         checklist_columns = [name for name in df.columns if "Checklist" in name]
-#         data_row = 0
-
         reload_dict = {}
 
         for keys, values in checklist_labels.items():
@@ -271,5 +303,3 @@ class ReportingChecklist(object):
                     vars(report_self)[keys][variable.split("_")[1]].value = value_to_enter
                 except:
                     pass
-                
-        print("Reporting reload runs OK")
