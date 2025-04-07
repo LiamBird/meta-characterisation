@@ -122,7 +122,7 @@ class ReportingChecklist(object):
                                              "C Rate max": wg.FloatText(description="Max"), 
                                              "Current density min": wg.FloatText(description="Min"),
                                              "Current density max": wg.FloatText(description="Max"),
-                                             "Current density report": wg.RadioButtons(options=["mA/mg", "mA/cm$^{2}$"]),
+                                             "Current density report": wg.RadioButtons(options=["mA/g", "mA/cm$^{2}$"]),
                                              "Constant voltage charge": wg.Checkbox(description="CV during charge", indent=False),
                                              "Constant voltage discharge": wg.Checkbox(description="CV during discharge", indent=False),
                                              "Multiple cells": wg.RadioButtons(description="Multiple cells shown with statistics?",

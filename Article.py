@@ -31,7 +31,7 @@ class Article(object):
             article_self.save_label.value = "Data saved {}".format(datetime.now().strftime("%H:%M:%S"))
             
             return widgetdict_to_savedict(article_self.widgets, label="Article", article=True)
-            print("saved")   
+#             print("saved")   
             
             
         elif get_headings == True:

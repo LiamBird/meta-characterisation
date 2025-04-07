@@ -18,7 +18,7 @@ class SaveReload(object):
                                  wg.HBox([save_self.choose_dropdown, save_self.confirm_dropdown])])
         
     def on_confirm_save_location_clicked(save_self):
-        print("Triggered SaveReload.on_confirm_save_location_clicked")
+#         print("Triggered SaveReload.on_confirm_save_location_clicked")
         import pandas as pd
         import numpy as np
                 

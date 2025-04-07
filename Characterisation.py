@@ -17,14 +17,14 @@ class Characterisation(object):
         
         char_self.system_analysed = ["raw materials", "composite", "electrode",  "in-situ/ operando", "post mortem/ ex-situ"]
 
-        char_self.techniques = {"Morphology": ["SEM", "SEM+EDX", "TEM", "TEM+EDX", "Optical","XCT", "FIB+SEM"],
-                      "Structure":  ["lab XRD", "lab XPS", "lab XRF", "NMR", "neutron", "XAS", "EXAFS", "SR radiography", "SR XRF"],
+        char_self.techniques = {"Morphology": ["SEM", "SEM+EDX", "TEM", "TEM+EDX", "TEM diffraction", "Optical","XCT", "FIB+SEM"],
+                      "Structure":  ["lab XRD", "lab XPS", "lab XRF", "NMR", "neutron", "XAS", "EXAFS", "SR XRD", "SR radiography", "SR XRF", "XANES"],
                       "Vibration": ["Raman", "FTIR", "UV-vis"],
-                      "Electrode properties": ["4-point conductivity", "Other conductivity", "TGA", "DSC"],
-                      "Area porosity": ["BET/ MBET", "DFT", "BJH", "HK"]}
+                      "Electrode properties": ["4-point conductivity", "Other conductivity", "TGA", "DSC", "ICP-OES"],
+                      "Area porosity": ["BET/ MBET", "DFT", "BJH", "HK", "Unspecified PSD"]}
 
         char_self.widgets = dict([(keys, dict([(technique_key, 
-                                                dict([(component_key, wg.Checkbox(indent=False, layout=cbox_layout)) 
+                                                dict([(component_key, wg.Checkbox(indent=False, value=False, layout=cbox_layout)) ## Modified to value=False 06/04/2025 to try to fix reloading issue!
                                                       for component_key in char_self.system_analysed]))
                                           for technique_key in values]))
                                      for keys, values in char_self.techniques.items()])
@@ -89,7 +89,10 @@ class Characterisation(object):
             category, technique, measurand = name.split(":")
             entry = df["Characterisation_"+name].iloc[data_row] ## may need different index when selected from dropdown
             
-            if type(entry) == type(True):            
-                char_self.widgets[category][technique][measurand].value = bool(entry)
-            elif type(entry) == type(np.nan):
-                pass
+            ## Modified 06/04/2025 to try to enable reload
+            if entry == True:            
+                char_self.widgets[category][technique][measurand].value = bool(True)
+            elif entry == False:
+                char_self.widgets[category][technique][measurand].value = bool(False)
+            else:
+                char_self.widgets[category][technique][measurand].value = bool(False)

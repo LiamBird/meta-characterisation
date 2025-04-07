@@ -17,11 +17,11 @@ class MetaChecklistTab(object):
         
         
         def on_save_reload_confirm_clicked(b):
-            print("Reload clicked")
+#             print("Reload clicked")
             self._save_reload.on_confirm_save_location_clicked()
             self.save_path = self._save_reload.save_path
             
-            print(self._save_reload.save_path)
+#             print(self._save_reload.save_path)
             
             if self._save_reload._reload == False:
                 self._article_headings = self._article.save_values(get_headings=True)
@@ -32,10 +32,10 @@ class MetaChecklistTab(object):
                 self.df = pd.DataFrame(dict([(keys, [np.nan]) for keys in self._article_headings+self._report_headings+self._characterisation_headings]))
                 self.df.to_csv(self.save_path)
                 self._idx = 0
-                print("Dataframe creating")
+#                 print("Dataframe creating")
                 
             elif self._save_reload._reload == True:
-                print("Dataframe loading")
+#                 print("Dataframe loading")
                 self.df = pd.read_csv(self.save_path, index_col=0)
                 
         def on_save_reload_dropdown_confirm_clicked(b):
@@ -105,6 +105,6 @@ class MetaChecklistTab(object):
         if test == True:
             self.save_path = "test_file_3.csv"
             self._article.widgets["First author"].value = "Darnielle"
-            self._article.widgets["Year"].value = 2005
+            self._article.widgets["Year"].value = 2015
             self._article.widgets["Optional label"].value = "Champ"
             self._article.widgets["DOI"].value = "10.101010"
